@@ -1,5 +1,6 @@
 import Task from './Task';
 import Summary from './Summary';
+import AddTask from './AddTask';
 
 import { useState } from 'react';
 
@@ -24,7 +25,9 @@ const initialTaskArray = [
 
 function TodoList(){
 
-  const [myTaskArray, setMyTaskArray] = useState(initialTaskArray)
+  const [myTaskArray, setMyTaskArray] = useState(initialTaskArray);
+
+  const [myFilteredArray, setMyFilteredArray] = useState(initialTaskArray);
 
   const toggleTask = (taskId) => {
 
@@ -40,11 +43,36 @@ function TodoList(){
 
   };
 
+  const addNewTask = (newTaskObject) => {
+
+    const copyArray = [...myTaskArray];
+
+    copyArray.push(newTaskObject);
+
+    setMyTaskArray(copyArray);
+    setMyFilteredArray(copyArray);
+
+  }
+
+  const handleSearch = (event) => {
+    console.log(event.target.value)
+    const matchArray = myTaskArray.filter(element => {
+      return element.name.includes(event.target.value);
+    })
+    setMyFilteredArray(matchArray);
+  }
+
   return (
     <div>
+      <div>
+        <h2>Search Tasks</h2>
+        <input type="text" onChange={handleSearch}/>
+      </div>
+      
+      <AddTask addNewTask={addNewTask} />
       <Summary myTaskArray={myTaskArray} />
       {
-        myTaskArray.map(singleTask => {
+        myFilteredArray.map(singleTask => {
           return <Task key={singleTask._id} taskObject={singleTask} toggleTask={toggleTask}/>
         })
       }
